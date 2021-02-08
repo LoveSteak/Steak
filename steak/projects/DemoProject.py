@@ -3,6 +3,7 @@ class DemoProject(Project):
     def __init__(self) -> None:
         super().__init__()
         print('Demo project init..')
+        self.jsurl='/jquery.js'
 
     def check_client(self,client:object):
         print('DemoProject Checking')

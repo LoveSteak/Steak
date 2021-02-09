@@ -1,6 +1,6 @@
 from steak import Steak
 from steak.handlers import CobaltStrikeHandler
-from steak.projects import DemoProject
+from DemoProject import DemoProject
 if __name__=='__main__':
     steak=Steak()
     steak.add_handler(CobaltStrikeHandler(host='kali',password='1145141919810'))

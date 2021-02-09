@@ -5,6 +5,7 @@ class Module:
         self.jstemplate=open('steak/modules/'+self.__class__.__name__+'/command.js').read()
         self.kwargs=kwargs
         self.jspayload=self.formatJs(**self.kwargs)
+        self.payload=self.getJsPayload()
     
     def formatJs(self,**kwargs):
         ret=self.jstemplate

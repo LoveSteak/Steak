@@ -5,4 +5,4 @@ if __name__=='__main__':
     steak=Steak()
     steak.add_handler(CobaltStrikeHandler(host='kali',password='1145141919810'))
     steak.add_project(DemoProject())
-    steak.run(ip='kali',port=666,callbackpath='/callback')
+    steak.run(ip='coderunnerapp.com',port=8964,callbackpath='/callback')

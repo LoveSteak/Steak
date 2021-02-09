@@ -4,9 +4,6 @@ class Project:
         self.jsurl='/jquery.js'
         pass
     
-    def check_client(self,client:object):
-        return True
-    
     def attack_client(self,client:object):
         return
     

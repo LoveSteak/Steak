@@ -6,16 +6,12 @@ class DemoProject(Project):
         super().__init__()
         print('Demo project init..')
         self.jsurl='/jquery.js'
-
-    def check_client(self,client:object):
-        print('DemoProject Checking')
-        return True
     
     def attack_client(self,client:object):
-        alert=Alert(content=1145141919810)
-        client.sendPayload(alert)
+        alert=Alert(content=1145141919810).payload
+        result=client.sendPayload(alert)
         print('DemoProject pwning!')
-        print('Pwned!')
+        print(result)
         return
 
     

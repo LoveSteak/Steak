@@ -1,6 +1,7 @@
 class Project:
     def __init__(self) -> None:
         print('project init')
+        self.clients={}
         self.jsurl='/jquery.js'
         pass
     
@@ -9,3 +10,4 @@ class Project:
     
     def load_module(self,modulename):
         __import__(f'../modules/{modulename}/{modulename}')
+    

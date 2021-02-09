@@ -73,6 +73,7 @@ class Server:
                     #Error Status
                     return self.generateResponse('Restart')
                 self.clientid2client[clientid]=client
+                project.clients[clientid]=client
                 _thread.start_new_thread( project.attack_client, (client,))
                 return self.generateResponse('')
             else:

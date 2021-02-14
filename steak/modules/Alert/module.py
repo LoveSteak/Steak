@@ -1,4 +1,4 @@
-from steak.Module import Module
+from steak.core.Module import Module
 
 class Alert(Module):
     def __init__(self,**kwargs) -> None:

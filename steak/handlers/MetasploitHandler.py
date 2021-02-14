@@ -1,5 +1,5 @@
 from pymetasploit3.msfrpc import MsfRpcClient
-from steak.Handler import Handler
+from steak.core.Handler import Handler
 import copy
 import _thread
 import time
@@ -9,7 +9,7 @@ class MetasploitHandler(Handler):
         super().__init__()
         self.client = MsfRpcClient(password, ssl=False)
 
-    def generateEvent(self):
+    def generate_event(self):
         last_sessions=copy.deepcopy(self.client.sessions.list)
         while True:
             time.sleep(1)

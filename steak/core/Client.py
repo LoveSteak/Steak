@@ -11,14 +11,15 @@ class Client:
         self.taskqueue=Queue()
         self.taskresult={}
 
-    def getlatesttask(self):
+    def get_latest_task(self):
         try:
             return self.taskqueue.get(False)
         except:
             return None
     
-    def sendPayload(self,payload,sync=1):
-        payload.setClient(self)
+    def send_payload(self,moduleobj,sync=1):
+        payload=moduleobj.payload
+        payload.set_client(self)
         self.taskqueue.put(payload)
         taskid=payload.taskid
         while sync:

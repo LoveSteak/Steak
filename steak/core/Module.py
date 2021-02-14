@@ -1,20 +1,20 @@
-import steak.Payload as Payload
+from steak.core import Payload
 
 class Module:
     def __init__(self,**kwargs) -> None:
         self.jstemplate=open('steak/modules/'+self.__class__.__name__+'/command.js').read()
         self.kwargs=kwargs
-        self.jspayload=self.formatJs(**self.kwargs)
-        self.payload=self.getJsPayload()
+        self.jspayload=self.format_js(**self.kwargs)
+        self.payload=self.get_jspayload()
     
-    def formatJs(self,**kwargs):
+    def format_js(self,**kwargs):
         ret=self.jstemplate
         for key in kwargs:
             ret=ret.replace(f"<steak>{str(key)}</steak>",str(kwargs[key]))
         return ret
     
-    def getJsPayload(self):
+    def get_jspayload(self):
         return Payload(self.jspayload,self)
     
-    def parseResult(self,result):
+    def parse_result(self,result):
         return result

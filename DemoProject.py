@@ -1,5 +1,4 @@
-import steak.Project as Project
-from steak.modules.Alert import Alert
+from steak.core import Project
 
 class DemoProject(Project):
     def __init__(self) -> None:
@@ -9,16 +8,16 @@ class DemoProject(Project):
         
     
     def attack_client(self,client:object):
-        alert=Alert(content=1145141919810).payload
-        result=client.sendPayload(alert)
+        alert=self.load_module('Alert',content=1145141919810)
+        result=client.send_payload(alert)
         print('DemoProject pwning!')
         print(result)
         return
 
-    def OnMetasploitHandler(self,session):
+    def on_metasploithandler(self,session):
         print("I'm so fucking lovvve msf")
         print(session)    
-        alert=Alert(content='You Are Hacked!').payload
+        alert=self.load_module('You are hacked',content=1145141919810)
         for clientid in self.clients:
             client=self.clients[clientid]
-            client.sendPayload(alert)
+            client.send_payload(alert)

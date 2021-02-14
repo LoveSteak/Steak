@@ -1,1 +1,1 @@
-from .CobaltStrikeHandler import CobaltStrikeHandler
+# from .CobaltStrikeHandler import CobaltStrikeHandler

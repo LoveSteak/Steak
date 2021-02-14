@@ -5,5 +5,5 @@ class Payload:
         self.taskid=randstring()
         self.payload_str=payload_str.replace('<steak>taskid</steak>',self.taskid)
     
-    def setClient(self,client):
+    def set_client(self,client):
         self.client=client

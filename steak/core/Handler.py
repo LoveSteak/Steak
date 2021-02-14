@@ -5,20 +5,20 @@ class Handler:
         if callbackname:
             self.callbackname=callbackname
         else:
-            self.callbackname="On"+self.__class__.__name__
-    def setSteak(self,steakobj):
+            self.callbackname="on_"+self.__class__.__name__.lower()
+    def set_steak(self,steakobj):
         self.steak=steakobj
 
-    def getCallbackname(self):
+    def get_callback_name(self):
         return self.callbackname
 
     @abstractmethod
-    def generateEvent(self):
+    def generate_event(self):
         pass
 
     def run(self):
         while True:
-            event=self.generateEvent()
+            event=self.generate_event()
             for project in self.steak.projects:
                 try:
                     method=getattr(project, self.callbackname)

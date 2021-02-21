@@ -1,3 +1,6 @@
+this.jscallback="<steak>callbackpath</steak>";
+this.jsurl="<steak>jsurl</steak>";
+
 function makeclientid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

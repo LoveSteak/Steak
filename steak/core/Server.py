@@ -20,29 +20,14 @@ class Server:
         self.clientid2client={}
         self.taskid2payloadobj={}
         self.clientids=set()
-        self.load_js_modules()
         for project in self.projects:
             if project.jsurl in self.jsurl2projects:
                 raise ValueError('Js URL cannot be replicate🐱🐱🐱🐱')
             self.jsurl2projects[project.jsurl]=project
-
-    def readjs(self,jsname):
-        #return open(os.path.join(os.path.dirname(__file__),'./sources/'+jsname)).read()
-        return open('./steak/sources/'+jsname).read()
     
     def get_full_callback_path(self):
         return 'http://'+self.ip+':'+str(self.port)+self.callbackpath
 
-    def load_js_modules(self):
-        self.jspredefjs=self.readjs('predef.js')
-        self.jqueryjs=self.readjs('jquery.js')
-        self.jsmain=self.readjs('main.js')       
-        self.evercookiejs=self.readjs('evercookie.js')    
-        self.swfobjectjs=self.readjs('swfobject-2.2.min.js')   
-        self.base64js=self.readjs('base64.js')
-    
-    def generate_js(self,callbackpath,jsurl):
-        return self.jqueryjs+self.swfobjectjs+self.base64js+self.evercookiejs+self.jspredefjs.format(callbackpath=callbackpath,jsurl=jsurl)+self.jsmain
 
     def _createclient(self,project):
         newclientid=uniquerandstring(self.clientids)
@@ -108,7 +93,7 @@ class Server:
                 project=self.jsurl2projects[path]
             else:
                 return ''
-            resp=Response(self.generate_js(self.get_full_callback_path(),project.jsurl))
+            resp=Response(project.generate_js(self.get_full_callback_path(),project.jsurl))
             resp.headers['Content-Type'] = 'text/javascript;charset=UTF-8'
             return resp
 

@@ -5,9 +5,9 @@ import _thread
 import time
 
 class MetasploitHandler(Handler):
-    def __init__(self,password:str,port=55553,ssl=False) -> None:
+    def __init__(self,password:str,port=55552,ssl=False) -> None:
         super().__init__()
-        self.client = MsfRpcClient(password, ssl=False)
+        self.client = MsfRpcClient(password, port=port,ssl=False)
 
     def generate_event(self):
         last_sessions=copy.deepcopy(self.client.sessions.list)

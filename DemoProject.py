@@ -8,16 +8,15 @@ class DemoProject(Project):
         
     
     def attack_client(self,client:object):
-        alert=self.load_module('Alert',content=1145141919810)
-        result=client.send_payload(alert)
-        print('DemoProject pwning!')
-        print(result)
+        i=0
+        while True:
+            alert=self.load_module('Consolelog',content=i)
+            result=client.send_payload(alert)
+            i+=1
+            print(result)
         return
 
     def on_metasploithandler(self,session):
         print("I'm so fucking lovvve msf")
         print(session)    
-        alert=self.load_module('You are hacked',content=1145141919810)
-        for clientid in self.clients:
-            client=self.clients[clientid]
-            client.send_payload(alert)
+        self.stop_attack()

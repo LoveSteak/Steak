@@ -9,6 +9,7 @@ class Client:
         self.curdomaincookies=clientinfo['curdomaincookies']
         self.cururl=clientinfo['cururl']
         self.taskqueue=Queue()
+        self.stopattack=False
         self.taskresult={}
 
     def get_latest_task(self):
@@ -16,8 +17,15 @@ class Client:
             return self.taskqueue.get(False)
         except:
             return None
+
+    def stop_attack(self):
+        self.stopattack=True
+        self.taskqueue=Queue()
+
     
     def send_payload(self,moduleobj,sync=1):
+        if self.stopattack:
+            raise Exception("Attack on this client should be stopped")
         payload=moduleobj.payload
         payload.set_client(self)
         self.taskqueue.put(payload)

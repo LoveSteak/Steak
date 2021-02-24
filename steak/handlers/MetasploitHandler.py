@@ -1,6 +1,5 @@
 from pymetasploit3.msfrpc import MsfRpcClient
 from steak.core.Handler import Handler
-import copy
 import _thread
 import time
 
@@ -12,12 +11,13 @@ class MetasploitHandler(Handler):
         
 
     def generate_event(self):
-        last_sessions=copy.deepcopy(self.client.sessions.list)
+        '''
+        Polls the msf server via msfrpc, returns when number of msf sessions increases.
+        '''
+        last_sessions=self.client.sessions.list
         while True:
             time.sleep(1)
-            print('[*]running generating msf event...')
             if len(self.client.sessions.list)>len(last_sessions):
-                print('[+]Oh my god!!! Online!!!!')
                 return self.client.sessions.list
             
     

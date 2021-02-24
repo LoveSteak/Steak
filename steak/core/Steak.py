@@ -1,4 +1,5 @@
 import steak.core as Core
+import steak.core.Project as Project
 import importlib
 
 
@@ -9,7 +10,7 @@ class Steak:
     '''
     projects=[]
 
-    def add_project(self,project:Core.Project)->None:
+    def add_project(self,project:Project.Project)->None:
         '''
         This function adds a project object passed in to the project list of this Steak object
         '''

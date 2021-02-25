@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import _thread
+from .Logger import Logger
 class Handler:
     '''
     The Handler class is the base class for external event handler.
@@ -7,6 +8,7 @@ class Handler:
     Users should at least implement generate_event function to implement this class
     '''
     def __init__(self,callbackname=None) -> None:
+        self.logger=Logger(f'Handle {self.__class__.__name__}')
         if callbackname:
             self.callbackname=callbackname
         else:
@@ -31,7 +33,9 @@ class Handler:
         Continously calls the generate_event function to obtain an external event and calls callback functions corresponding to this handler in all projects
         '''
         while True:
+            self.logger.debug(f'generating events of {self.__class__.__name__}')
             event=self.generate_event()
+            self.logger.info(f'an external event of {self.__class__.__name__} occured')
             for project in self.steak.projects:
                 try:
                     method=getattr(project, self.callbackname)
@@ -45,4 +49,5 @@ class Handler:
         Runs the self.run function in a new thread
         '''
         print('[*]Handler running background...')
+        self.logger.debug(f'Handler {self.__class__.__name__} runs background')
         _thread.start_new_thread( self.run, tuple())

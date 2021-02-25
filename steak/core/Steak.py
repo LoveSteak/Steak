@@ -15,7 +15,7 @@ class Steak:
     
     
     def __init__(self):
-        self.logger = Logger(logger="SCUSPORTS")
+        self.logger = Logger(logger="Steak.py")
         banner='''
         
         ███████╗████████╗███████╗ █████╗ ██╗  ██╗

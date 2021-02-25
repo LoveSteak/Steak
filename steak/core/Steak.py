@@ -1,6 +1,9 @@
-import steak.core as Core
-import steak.core.Project as Project
+from .Project import Project
+from .Server import Server
+from .Validator import Validator
+from .Logger import Logger
 import importlib
+
 
 
 class Steak:
@@ -9,12 +12,28 @@ class Steak:
     it gathers loaded projects together,runs all handlers background,and launch the HTTP server
     '''
     projects=[]
+    
+    
+    def __init__(self):
+        self.logger = Logger(logger="SCUSPORTS")
+        banner='''
+        
+        ███████╗████████╗███████╗ █████╗ ██╗  ██╗
+        ██╔════╝╚══██╔══╝██╔════╝██╔══██╗██║ ██╔╝
+        ███████╗   ██║   █████╗  ███████║█████╔╝ 
+        ╚════██║   ██║   ██╔══╝  ██╔══██║██╔═██╗ 
+        ███████║   ██║   ███████╗██║  ██║██║  ██╗
+        ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝  v0.1 2021-01-25
+                                                
+        '''
+        self.logger.info(banner)
+        
 
-    def add_project(self,project:Project.Project)->None:
+    def add_project(self,project)->None:
         '''
         This function adds a project object passed in to the project list of this Steak object
         '''
-        Core.Validator(project,Core.Project)
+        Validator(project,Project)
         self.projects.append(project)
 
     def run(self,ip:str,port:int,callbackpath:str="/callback")->None:
@@ -22,8 +41,8 @@ class Steak:
         This function launch a server implemented by Server class
         '''
         print(f'running at http://{ip}:{port}/')
-        Core.Validator(port,int)
-        self.server=Core.Server(ip,port,self.projects,callbackpath)
+        Validator(port,int)
+        self.server=Server(ip,port,self.projects,callbackpath)
         self.server.run()
 
     def add_handler(self,handlername:str,*args,**kwargs):

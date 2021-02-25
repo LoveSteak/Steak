@@ -1,4 +1,4 @@
-from steak.core import Payload
+from .Payload import Payload
 from steak.utils import steak_format
 class Module:
     '''

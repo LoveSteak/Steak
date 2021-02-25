@@ -65,7 +65,7 @@ class Project:
             self.set_js_payload(steak_format(';\n'.join([self.readjs(jsname) for jsname in self.jslist]),callbackpath=callbackpath,jsurl=jsurl))
         return self.js_payload
 
-    def stop_attack(self,coverjs_list:list[str]=['jquery.js'])->None:
+    def stop_attack(self,coverjs_list=['jquery.js'])->None:
         '''
         Stop running the project! 
         Stop ALL attacks on connected client immediately

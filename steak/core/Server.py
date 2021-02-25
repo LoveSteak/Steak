@@ -16,7 +16,7 @@ class Server:
     It can receive information submited by victim and dispatch the information to attack_client function the victim corresponds to 
     It can also provide hooking javascript to victim and send task to victim
     '''
-    def __init__(self,ip:str,port:int,projects:list[Project],callbackpath:str) -> None:
+    def __init__(self,ip:str,port:int,projects,callbackpath:str) -> None:
         self.ip=ip
         self.port=port
         self.projects=projects

@@ -1,6 +1,5 @@
 import json
 from queue import Queue
-from .Module import Module
 import time
 import threading 
 import  _thread
@@ -41,7 +40,7 @@ class Client:
         self.taskqueue=Queue()
 
     
-    def send_payload(self,moduleobj:Module,callback:callable=None):
+    def send_payload(self,moduleobj:object,callback:callable=None):
         '''
         Receives an attack module object and send the payload to the client
         By default, this function waits for the result of execution and returns the result

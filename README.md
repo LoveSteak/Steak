@@ -1,6 +1,7 @@
 # Steak-XSS
-
-<center><img align="center" src="logo.jpg"/></center>
+<div align=center>
+<img src="logo.jpg"/>
+</div>
 
 **Steak ——An advanced XSS exploitation tool**
 

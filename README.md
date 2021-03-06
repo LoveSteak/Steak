@@ -1,7 +1,7 @@
 
 <h1 align="center" >Steak-XSS</h1>
 
-<h3 align="center" >Steak ——An advanced XSS exploitation tool</h3>
+<h3 align="center" >Steak —— An advanced XSS exploitation tool</h3>
 <div align=center>
 <img src="https://raw.githubusercontent.com/LoveSteak/Steak/master/logo.jpg"/>
 </div>
@@ -20,7 +20,7 @@ Using your internal-use secret RAT other than MSF or CS but still want Steak to 
 
 **This is a new project and it might not be perfect. We welcome your issues or pull requests to imporve Steak together.**
 
-<h5 align="center" ><a href="README-zh.md">中文文档</a> | <a href="README.md">English</a></h5>
+<h3 align="center" ><a href="README-zh.md">中文文档</a> | <a href="README.md">English</a></h3>
 
 # Why we choose the name "Steak"?
 

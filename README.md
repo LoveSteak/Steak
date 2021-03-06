@@ -1,6 +1,6 @@
 # Steak-XSS
 <div align=center>
-<img src="logo.jpg"/>
+<img src="https://raw.githubusercontent.com/LoveSteak/Steak/master/logo.jpg"/>
 </div>
 
 **Steak ——An advanced XSS exploitation tool**

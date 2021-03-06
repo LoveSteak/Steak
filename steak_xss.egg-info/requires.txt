@@ -1,4 +1,0 @@
-Flask>=1.1.2
-pymetasploit3>=1.0.3
-colorama>=0.4.4
-gevent>=21.1.2

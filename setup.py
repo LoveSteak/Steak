@@ -4,14 +4,13 @@ setup(
     name = "steak-xss",
     version = "0.2.2",
     keywords = ["steak", "xss","steak-xss"],
-    description = "An automatic XSS vulnerability exploit tool",
+    description = "An advanced XSS exploitation tool",
     license = "MIT",
-    url = "https://github.com/LoveSteak/Steak",          # your module home page, such as
-    author = "LoveSteak",                         # your name
-    author_email = "hiramscu@163.com",    # your email
+    url = "https://github.com/LoveSteak/Steak",
+    author = "LoveSteak",
+    author_email = "hiramscu@163.com",
 
     packages = find_packages(),
-    #packages = ['steak'],
     include_package_data = True,
     platforms = "any",
     install_requires = [

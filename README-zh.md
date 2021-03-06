@@ -21,7 +21,9 @@ Steak是一款面向红队和高级渗透测试人员的XSS利用工具. 你可�
 
 **这是一个新的项目，它可能不够完善. 我们很欢迎你来提交issue或者pull requests来一起将Steak完善。**
 
-
+<div align=center>
+<img src="https://raw.githubusercontent.com/LoveSteak/Steak/master/demo.jpg"/>
+</div>
 
 # 为什么这个项目叫做 “Steak”？
 

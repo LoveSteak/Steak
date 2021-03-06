@@ -1,6 +1,7 @@
 from .Payload import Payload
 from steak.utils import steak_format
 from .Logger import Logger
+import os
 class Module:
     '''
     The Module class is the base class for attack modules
@@ -10,9 +11,10 @@ class Module:
         self.logger = Logger()
         try:
             self.logger.debug(f'Reading Moudle javascript from steak/modules/{self.__class__.__name__}/command.js')
-            self.jstemplate=open(f'steak/modules/{self.__class__.__name__}/command.js').read()
+            jspath=os.path.join(os.path.dirname(__file__),f'../modules/{self.__class__.__name__}/command.js')
+            self.jstemplate=open(jspath).read()
         except FileNotFoundError:
-            raise Exception(f'Javascript source file not found in /steak/modules/{self.__class__.__name__}/command.js, we expect you to place one there')
+            raise Exception(f'Javascript source file not found in {jspath}, we expect you to place one there')
         self.kwargs=kwargs
         self.jspayload=steak_format(self.jstemplate,**self.kwargs)
         self.payload=self.get_jspayload()

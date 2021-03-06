@@ -6,6 +6,7 @@ from .Client import Client
 from .Validator import Validator
 from .Module import Module
 from .Logger import Logger
+import os
 class Project:
     '''
     The Project is the base class for projects
@@ -31,9 +32,10 @@ class Project:
         '''
         self.logger.debug(f'Reading Contents From ./steak/sources/{jsname}')
         try:
-            return open(f'./steak/sources/{jsname}').read()
+            jspath=os.path.join(os.path.dirname(__file__),f'../sources/{jsname}')
+            return open(jspath).read()
         except FileNotFoundError:
-            raise Exception(f'Javascript source file not found in /steak/sources/{jsname}, please check your filename')
+            raise Exception(f'Javascript source file not found in {jspath}, please check your filename')
     
 
     def encode_js(self,content:str)->str:

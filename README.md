@@ -7,9 +7,9 @@
 
 Steak is an advanced XSS exploitation tool built for skilled professional penetration testers and red teams. With Steak, you can customize and automate every step of exploitation by building your own "project script" to perform several advanced attacks. 
 
-Want to create a fake Flash update but don't want victims installed your trojan still see the pop-up window? A piece of cake! We can receive external events from Cobalt Strike or Metasploit to stop the attack at the right time!
+Want to create a fake Flash update to perform a phish attack but don't want victims installed your trojan still see the pop-up window? A piece of cake! We can use Steak to receive external events from Cobalt Strike or Metasploit to stop the attack at the right time!
 
-Doing pentest in a highly adversarial environment and don't want to be caught by analysts? Elementary!  We can detect users using proxy or incognito window and replace original malicious javascript into a normal harmless javascript file!
+Doing pentest in a highly adversarial environment and don't want to be caught by analysts? Elementary!  We can use Steak to detect users using proxy or incognito window and replace original malicious javascript into a normal harmless javascript file to evade from them!
 
 More over, our Steak-XSS framework is easy-to-extend to hack in the way you like. The only limit is your imagination.
 
@@ -140,7 +140,7 @@ Steak will read handlers in `steak/handlers` folder. Each handler has its own py
 
 You must inherit `Handlers` class when you are implementing your own handler.
 
-You just need to overwrite `generate_event` function to implement your own communication functions in standard Python code. Steak will start a new thread to call this function. Importantly, this function should return only when an external event happened. If you have one or more parameters that you need to return to callback function, you can just use it as the return value of `generate_event` function. When you return, Steak will call `on_{your handler name}` function in every project if exists automatically.
+You just need to overwrite `generate_event` function to implement your own communication functions in standard Python code. Steak will start a new thread to call this function continuously. Importantly, this function should return only when an external event happened. If you have one or more parameters that you need to return to callback function, you can just use it as the return value of `generate_event` function. When you return, Steak will call `on_{your handler name}` function in every project if exists automatically.
 
 Moreover, you can also use Steak server as the source of your message. You need to use code below to register a path in Steak server. When there is a request in this path, Steak server will call callback function you give and pass you a Request object in Flask.
 

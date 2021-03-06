@@ -1,8 +1,8 @@
 # Steak-XSS
 
-![SteakLogo](logo.jpg)
+<center><img src="logo.jpg"/></center>
 
-Steak ——An advanced XSS exploitation tool
+**Steak ——An advanced XSS exploitation tool**
 
 Steak is an advanced XSS exploitation tool built for skilled professional penetration testers and red teams. With Steak, you can customize and automate every step of exploitation by building your own "project script" to perform several advanced attacks. 
 

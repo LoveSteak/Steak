@@ -6,6 +6,8 @@
 <img src="https://raw.githubusercontent.com/LoveSteak/Steak/master/logo.jpg"/>
 </div>
 
+<h3 align="center" ><a href="README-zh.md">中文文档</a> | <a href="README.md">English</a></h3>
+
 Steak is an advanced XSS exploitation tool built for skilled professional penetration testers and red teams. With Steak, you can customize and automate every step of exploitation by building your own "project script" to perform several advanced attacks. 
 
 Want to create a fake Flash update to perform a phish attack but don't want victims installed your trojan still see the pop-up window? A piece of cake! We can use Steak to receive external events from Cobalt Strike or Metasploit to stop the attack at the right time!
@@ -19,8 +21,6 @@ Having an 0day exploit on a router and would like to triger it via CSRF? Pretty 
 Using your internal-use secret RAT other than MSF or CS but still want Steak to intereact with it? Not a problem! Implement an event handler to receive information from the RAT or any other tools you like!
 
 **This is a new project and it might not be perfect. We welcome your issues or pull requests to imporve Steak together.**
-
-<h3 align="center" ><a href="README-zh.md">中文文档</a> | <a href="README.md">English</a></h3>
 
 # Why we choose the name "Steak"?
 

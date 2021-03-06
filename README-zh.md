@@ -1,9 +1,11 @@
-# Steak-XSS
+<h1 align="center" >Steak-XSS</h1>
+
+<h3 align="center" >Steak —— 一款高级的XSS利用工具</h3>
 <div align=center>
 <img src="https://raw.githubusercontent.com/LoveSteak/Steak/master/logo.jpg"/>
 </div>
 
-**Steak ——一款高级的XSS利用工具**
+<h3 align="center" ><a href="README-zh.md">中文文档</a> | <a href="README.md">English</a></h3>
 
 Steak是一款面向红队和高级渗透测试人员的XSS利用工具. 你可以通过编写project脚本来控制并自动化渗透攻击的每一步，以此执行一些高级的攻击
 

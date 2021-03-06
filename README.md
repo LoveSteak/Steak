@@ -1,6 +1,6 @@
 # Steak-XSS
 
-![SteakLogo](steak.png)
+![SteakLogo](logo.jpg)
 
 Steak ——An advanced XSS exploitation tool
 

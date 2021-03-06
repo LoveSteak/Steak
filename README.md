@@ -19,6 +19,10 @@ Using your internal-use secret RAT other than MSF or CS but still want Steak to 
 
 **This is a new project and it might not be perfect. We welcome your issues or pull requests to imporve Steak together.**
 
+# Why we choose the name "Steak"?
+
+Because we'd like to salute to our predecessor, the Beefproject. And one of our core developers love eating steak
+
 # Install
 
 You can use pip to install Steak easily. Using command below:

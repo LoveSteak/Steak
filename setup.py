@@ -1,10 +1,15 @@
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name = "steak-xss",
-    version = "0.2.2",
+    version = "0.2.3",
     keywords = ["steak", "xss","steak-xss"],
     description = "An advanced XSS exploitation tool",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license = "MIT",
     url = "https://github.com/LoveSteak/Steak",
     author = "LoveSteak",

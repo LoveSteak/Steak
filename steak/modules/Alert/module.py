@@ -6,4 +6,3 @@ class Alert(Module):
     '''
     def __init__(self,**kwargs) -> None:
         super().__init__(**kwargs)
-        print('alert called!')

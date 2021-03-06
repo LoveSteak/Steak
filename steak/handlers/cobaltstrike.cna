@@ -1,5 +1,5 @@
 # ------------ set these config: ------------
-$password = "fuckhiram";
+$password = "demo";
 $serverurl = 'http://127.0.0.1:666/cobaltstrikecallback';    
 # -------------------------------------------
 

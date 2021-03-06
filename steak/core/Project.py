@@ -14,7 +14,7 @@ class Project:
     And we also encourage our users the modify other attributes such as jsurl,fakejs_list,encoder_list and so on
     '''
     def __init__(self) -> None:
-        self.logger = Logger(logger=f"Project {self.__class__.__name__}")
+        self.logger = Logger()
         self.clients={}
         self.jsurl='/jquery.js'
         self.jslist=['jquery.js','evercookie.js','swfobject-2.2.min.js','base64.js','main.js']
@@ -29,7 +29,7 @@ class Project:
         '''
         read js from /steak/sources/
         '''
-        self.logger.debug(f'reading contents from ./steak/sources/{jsname}')
+        self.logger.debug(f'Reading Contents From ./steak/sources/{jsname}')
         try:
             return open(f'./steak/sources/{jsname}').read()
         except FileNotFoundError:
@@ -44,12 +44,12 @@ class Project:
             try:
                 self.encoder_list=[]
                 for encodername in self.encoder_list:
-                    self.logger.debug(f'loading encoder module from steak.encoders.{encodername}')
+                    self.logger.debug(f'Loading Encoder Moudle From steak.encoders.{encodername}')
                     self.encoder_list.append(importlib.import_module('steak.encoders.{encodername}').encode)
             except ModuleNotFoundError:
-                raise Exception(f'Can not find encoder module in file:steak/encoders/{encodername}.py, please check your name')
+                raise Exception(f'Cannot find encoder module in file:steak/encoders/{encodername}.py, please check your name')
             except AttributeError:
-                raise Exception(f'Can not find function encode in file of an attack module: steak/encoders/{encodername}.py, please check your code')
+                raise Exception(f'Cannot find function encode in file of an attack module: steak/encoders/{encodername}.py, please check your code')
         for encodefunc in self.encoder_list:
             content=encodefunc(content)
         return content 
@@ -66,7 +66,7 @@ class Project:
         If not, it will generate js cache that is set by self.jslist and callback url
         Finally, it returns the js_payload cache
         '''
-        self.logger.debug(f'generating js_payload with callbackpath:{callbackpath} and jsurl"{jsurl}')
+        self.logger.debug(f'Generating Payload with callbackpath:{callbackpath}')
         if not self.js_payload:
             self.set_js_payload(steak_format(';\n'.join([self.readjs(jsname) for jsname in self.jslist]),callbackpath=callbackpath,jsurl=jsurl))
         return self.js_payload
@@ -80,7 +80,7 @@ class Project:
         Args:
             coverjs_list: A list of javascript filenames. The function will read javascript file in steak/sources/ by filenames in coverjs_list  and return to client
         '''
-        self.logger.debug(f'stop all attack of project whose name is {self.project_name}')
+        self.logger.warning(f'Stopping All Attack of Project {self.project_name}')
         Validator(coverjs_list,list)
         self.stopattack=True
         self.set_js_payload(';\n'.join([self.readjs(jsname) for jsname in coverjs_list]))
@@ -107,5 +107,6 @@ class Project:
         except AttributeError:
             raise Exception(f'Can not find class {modulename} in file of an attack module: steak/modules/{modulename}/module.py, please check your code')
 
+        self.logger.info(f'Loaded Moudle: {modulename}')
         return moduleobj(*args,**kwargs)
     

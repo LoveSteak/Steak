@@ -22,8 +22,7 @@ class CobaltStrikeHandler(Handler):
             self.onlineinfo.put({'ip':request.form.get('ip'),'computername':request.form.get('computername'),'username':request.form.get('username')})
         return ''
 
-
-    def __init__(self,listenonpath='/cobaltstrikecallback',password='fuckhiram') -> None:
+    def __init__(self,listenonpath='/cobaltstrikecallback',password='demo') -> None:
         super().__init__()
         self.onlineinfo=Queue()
         self.lisenonpath=listenonpath

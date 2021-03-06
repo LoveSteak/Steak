@@ -7,9 +7,9 @@ class Module:
     Users can derive this class and build their own attack modules.
     '''
     def __init__(self,**kwargs) -> None:
-        self.logger=Logger(f'Module {self.__class__.__name__}')
+        self.logger = Logger()
         try:
-            self.logger.debug(f'reading javascript from steak/modules/{self.__class__.__name__}/command.js')
+            self.logger.debug(f'Reading Moudle javascript from steak/modules/{self.__class__.__name__}/command.js')
             self.jstemplate=open(f'steak/modules/{self.__class__.__name__}/command.js').read()
         except FileNotFoundError:
             raise Exception(f'Javascript source file not found in /steak/modules/{self.__class__.__name__}/command.js, we expect you to place one there')

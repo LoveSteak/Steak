@@ -1,6 +1,5 @@
 from pymetasploit3.msfrpc import MsfRpcClient
 from steak.core.Handler import Handler
-import _thread
 import time
 
 

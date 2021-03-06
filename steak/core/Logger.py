@@ -3,33 +3,46 @@ from colorama import Fore, Style
 import sys
 
 class Logger(object):
-	def __init__(self, logger):
-		self.logger = logging.getLogger(name=logger)
-		self.logger.setLevel(logging.DEBUG)  # 指定最低的日志级别 critical > error > warning > info > debug
-		if not self.logger.handlers:
-			# 创建一个handler，用于输出到控制台
-			ch = logging.StreamHandler(sys.stdout)
-			ch.setLevel(logging.DEBUG)
-			
-			# 定义handler的输出格式
-#			formatter = logging.Formatter(
-#				"%(asctime)s  - %(message)s")
-#			ch.setFormatter(formatter)
-			
-			# 给logger添加handler
-			# self.logger.addHandler(fh)
-			self.logger.addHandler(ch)
-	def debug(self, msg):
-		self.logger.debug(Fore.WHITE + str(msg) + Style.RESET_ALL)
-		
-	def info(self, msg):
-		self.logger.info(Fore.GREEN + str(msg) + Style.RESET_ALL)
-		
-	def warning(self, msg):
-		self.logger.warning(Fore.RED + str(msg) + Style.RESET_ALL)
-		
-	def error(self, msg):
-		self.logger.error(Fore.RED + str(msg) + Style.RESET_ALL)
-		
-	def critical(self, msg):
-		self.logger.critical(Fore.RED + str(msg) + Style.RESET_ALL)
+    def __init__(self):
+        self.logger = logging.getLogger(name="Steak")
+        
+        if not self.logger.handlers:
+            ch = logging.StreamHandler(sys.stdout)
+            ch.setLevel(logging.DEBUG)
+            self.logger.addHandler(ch)
+
+    def type2symbol(self, typein):
+        type2symbol_dict = {'normal': '[*] ',
+            'bad': '[-] ', 'good': '[+] ', 'none': ''}
+
+        return type2symbol_dict.get(typein, "[*] ")
+
+    def setLevel(self,level):
+        self.logger.setLevel(level)
+
+    def getLevel(self):
+        return self.logger.level
+
+    def debug(self, msg, typein="normal"):
+        self.logger.debug(Fore.WHITE + self.type2symbol(typein) +
+                          str(msg) + Style.RESET_ALL)
+
+    def info(self, msg, typein="normal"):
+        self.logger.info(Fore.GREEN + self.type2symbol(typein) +
+                         str(msg) + Style.RESET_ALL)
+
+    def good(self, msg, typein="good"):
+        self.logger.info(Fore.MAGENTA + self.type2symbol(typein) +
+                         str(msg) + Style.RESET_ALL)
+
+    def banner(self, msg, typein="none"):
+        self.logger.info(Fore.YELLOW + self.type2symbol(typein) + str(msg) + Style.RESET_ALL)
+        
+    def warning(self, msg, typein="bad"):
+        self.logger.warning(Fore.RED + self.type2symbol(typein) + str(msg) + Style.RESET_ALL)
+        
+    def error(self, msg, typein="bad"):
+        self.logger.error(Fore.RED + self.type2symbol(typein) + str(msg) + Style.RESET_ALL)
+        
+    def critical(self, msg, typein="normal"):
+        self.logger.critical(Fore.RED + self.type2symbol(typein) + str(msg) + Style.RESET_ALL)

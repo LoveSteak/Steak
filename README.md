@@ -16,7 +16,7 @@ Having an 0day exploit on a router and would like to triger it via CSRF? Pretty 
 
 Using your internal-use secret RAT other than MSF or CS but still want Steak to intereact with it? Not a problem! Implement an event handler to receive information from the RAT or any other tools you like!
 
-This is a new project and it might not be perfect. We welcome your issues or pull requests to imporve Steak together.
+**This is a new project and it might not be perfect. We welcome your issues or pull requests to imporve Steak together.**
 
 # Install
 

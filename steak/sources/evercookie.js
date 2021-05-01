@@ -57,15 +57,6 @@ function _ec_replace(str, key, value)
 // necessary for flash to communicate with js...
 // please implement a better way
 var _global_lso;
-function _evercookie_flash_var(cookie)
-{
-	_global_lso = cookie;
-
-	// remove the flash object now
-	var swf = $('#myswf');
-	if (swf && swf.parentNode)
-		swf.parentNode.removeChild(swf);
-}
 
 var evercookie = (function () {
 this._class = function() {

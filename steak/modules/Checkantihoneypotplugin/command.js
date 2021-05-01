@@ -1,0 +1,1 @@
+sendDataBack({'honeypot':document.getElementsByTagName('html')[0].innerHTML.indexOf('//劫持o'+'penDataBase')>-1},'<steak>taskid</steak>')

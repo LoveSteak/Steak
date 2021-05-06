@@ -26,6 +26,7 @@ class Steak:
         This function adds a project object passed in to the project list of this Steak object
         '''
         Validator(project,Project)
+        project.set_steak(self)
         self.projects.append(project)
         self.logger.info(f'Project {project.project_name} Loaded')
 

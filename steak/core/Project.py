@@ -103,12 +103,16 @@ class Project:
         Generates a module object by its name and parameters passed in
         '''
         try:
-            moduleobj=getattr(importlib.import_module(f'steak.modules.{modulename}.module'),modulename) 
+            moduleclass=getattr(importlib.import_module(f'steak.modules.{modulename}.module'),modulename) 
         except ModuleNotFoundError:
             raise Exception(f'Can not find attack module in file:steak/modules/{modulename}/module.py, please check your name')
         except AttributeError:
             raise Exception(f'Can not find class {modulename} in file of an attack module: steak/modules/{modulename}/module.py, please check your code')
 
         self.logger.info(f'Loaded Moudle: {modulename}')
-        return moduleobj(*args,**kwargs)
-    
+        moduleobj=moduleclass(*args,**kwargs)
+        moduleobj.set_steak(self.steak)
+        return moduleobj
+
+    def set_steak(self,steakobj)->str:
+        self.steak=steakobj
